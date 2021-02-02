@@ -150,9 +150,14 @@ fi
 
 set -e
 
-PIP_VERSION='21.3.1'
 SETUPTOOLS_VERSION='57.5.0'
 WHEEL_VERSION='0.37.0'
+
+if [[ -r "$ENV_DIR/BUILD_PIP_VERSION" ]]; then
+  BUILD_PIP_VERSION="$(cat "$ENV_DIR/BUILD_PIP_VERSION")"
+fi
+PIP_VERSION="${BUILD_PIP_VERSION:-20.1.1}"
+
 
 if [[ "${PYTHON_VERSION}" == ${PY34}* ]]; then
   # Python 3.4 support was dropped in pip 19.2+, setuptools 44+ and wheel 0.34+.
