@@ -142,7 +142,11 @@ fi
 
 set -e
 
-PIP_VERSION='20.1.1'
+if [[ -r "$ENV_DIR/BUILD_PIP_VERSION" ]]; then
+  BUILD_PIP_VERSION="$(cat "$ENV_DIR/BUILD_PIP_VERSION")"
+fi
+PIP_VERSION="${BUILD_PIP_VERSION:-20.1.1}"
+
 # Must use setuptools <47.2.0 until we fix:
 # https://github.com/heroku/heroku-buildpack-python/issues/1006
 SETUPTOOLS_VERSION='47.1.1'
@@ -176,10 +180,6 @@ if ! curl -sSf "${PIP_WHEEL_URL}" -o "$PIP_WHEEL"; then
 fi
 
 if [[ -f "$BUILD_DIR/Pipfile" ]]; then
-  # The buildpack is pinned to old pipenv, which requires older pip.
-  # Pip 9.0.2 doesn't support installing itself from a wheel, so we have to use split
-  # versions here (ie: installer pip version different from target pip version).
-  PIP_VERSION='9.0.2'
   PIP_TO_INSTALL="pip==${PIP_VERSION}"
 else
   PIP_TO_INSTALL="${PIP_WHEEL}"
